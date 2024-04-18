@@ -1,0 +1,28 @@
+version: '3.7'
+
+services:
+  mysql:
+    image: mysql:8.0.32
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: true
+      MYSQL_ROOT_PASSWORD:
+      MYSQL_DATABASE: my-app
+      MYSQL_USER: root
+      MYSQL_PASSWORD:
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  symfony:
+    build: .
+    ports:
+      - "8000:80"
+    depends_on:
+      - mysql
+    environment:
+      - DATABASE_URL=mysql://root:@mysql:3306/my-app?serverVersion=8.0.32&charset=utf8mb4
+
+volumes:
+  mysql_data:
